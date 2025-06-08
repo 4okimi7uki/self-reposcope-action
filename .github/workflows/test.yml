@@ -25,4 +25,4 @@ jobs:
             - name: Check result file exists
               shell: bash
               run: |
-                  test -f ./tools/self-reposcope/output/*.svg && echo "SVG file generated successfully"
+                  test -f ./tools/self-reposcope/output/*.svg && cp -r ./tools/self-reposcope/output . && echo "SVG file generated successfully"
