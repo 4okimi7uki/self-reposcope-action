@@ -1,0 +1,3 @@
+[submodule "tools/self-reposcope"]
+	path = tools/self-reposcope
+	url = https://github.com/4okimi7uki/self-reposcope
