@@ -7,6 +7,13 @@
 
 A GitHub Action to visualize your GitHub language usage stats (including private repositories) as stylish SVGs — powered by [self-reposcope](https://github.com/4okimi7uki/self-reposcope).
 
+---
+
+⚠️ This Action is currently under maintenance / adjustment.  
+Feel free to explore, but we do not recommend using it in production yet.
+
+---
+
 ## Quick Start
 
 1. Add the following to your `.github/workflows/reposcope.yml`:
