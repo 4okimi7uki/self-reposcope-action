@@ -1,0 +1,34 @@
+name: "Self RepoScope"
+description: "Generate language usage stats as SVG from your GitHub repos (including private)"
+author: "4okimi7uki"
+inputs:
+    github_token:
+        description: "GitHub Personal Access Token with repo access"
+        required: true
+runs:
+    using: "composite"
+    steps:
+        - name: Set up Rust
+          uses: actions-rs/toolchain@v1
+          with:
+              toolchain: stable
+              override: true
+
+        - name: Cache cargo
+          uses: actions/cache@v3
+          with:
+              path: |
+                  ~/.cargo/registry
+                  ~/.cargo/git
+                  target
+              key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+        - name: Install system deps
+          run: sudo apt-get update && sudo apt-get install -y pkg-config libssl-dev
+
+        - name: Build & run self-reposcope
+          shell: bash
+          env:
+              GITHUB_TOKEN: ${{ inputs.github_token }}
+          run: |
+              cargo run --release
