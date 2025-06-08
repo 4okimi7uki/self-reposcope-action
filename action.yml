@@ -37,3 +37,12 @@ runs:
               GITHUB_TOKEN: ${{ inputs.github_token }}
           run: |
               cargo run --release
+              cp -r output ../..
+
+        - name: Commit and Push SVG
+          run: |
+              git config --global user.name 'github-actions[bot]'
+              git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+              git add output/*.svg
+              git commit -m "chore: update language stats svg" || echo "No changes to commit"
+              git push
