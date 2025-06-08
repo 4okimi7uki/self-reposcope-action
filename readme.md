@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/4okimi7uki/self-reposcope-action/actions/workflows/test.yml/badge.svg)](https://github.com/4okimi7uki/self-reposcope-action/actions/workflows/test.yml)
 [![Version](https://img.shields.io/github/v/release/4okimi7uki/self-reposcope-action?include_prereleases)](https://github.com/4okimi7uki/self-reposcope-action/releases)
-[![License](https://img.shields.io/github/license/4okimi7uki/self-reposcope-action)](./LICENSE)
+[![License](https://img.shields.io/github/license/4okimi7uki/self-reposcope)](https://github.com/4okimi7uki/self-reposcope/blob/main/LICENSE)
 [![Stars](https://img.shields.io/github/stars/4okimi7uki/self-reposcope-action?style=social)](https://github.com/4okimi7uki/self-reposcope-action/stargazers)
 
 A GitHub Action to visualize your GitHub language usage stats (including private repositories) as stylish SVGs — powered by [self-reposcope](https://github.com/4okimi7uki/self-reposcope).
@@ -23,19 +23,27 @@ jobs:
     update-stats:
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout
+            - name: Checkout (with submodules)
               uses: actions/checkout@v3
+              with:
+                  submodules: recursive
 
             - name: Run self-reposcope
               uses: 4okimi7uki/self-reposcope-action@v1
               with:
-                  token: ${{ secrets.REPOSCOPE_TOKEN }}
+                  github_token: ${{ secrets.REPOSCOPE_TOKEN }}
 ```
 
 2. Set your `REPOSCOPE_TOKEN` in **Settings > Secrets and variables > Actions > [Repository secrets]**
    (must be a personal access token with repo access)
 
-3. Commit & watch the SVG update in `./output`
+3. Add submodule:
+
+```bash
+git submodule add https://github.com/4okimi7uki/self-reposcope tools/self-reposcope
+```
+
+4. Commit & watch the SVG update in `./output`
 
 ## Output Example
 
