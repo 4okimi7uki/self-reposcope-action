@@ -27,7 +27,7 @@ jobs:
                   token: ${{ secrets.REPOSCOPE_TOKEN }}
 ```
 
-2. Set your `REPOSCOPE_TOKEN` in **Settings > Secrets**
+2. Set your `REPOSCOPE_TOKEN` in **Settings > Secrets and variables > Actions > [Repository secrets]**
    (must be a personal access token with repo access)
 
 3. Commit & watch the SVG update in `./output`
