@@ -23,5 +23,6 @@ jobs:
                   github_token: ${{ secrets.REPOSCOPE_TOKEN }}
 
             - name: Check result file exists
+              shell: bash
               run: |
                   test -f output/full_languages.svg && echo "SVG file generated successfully"
