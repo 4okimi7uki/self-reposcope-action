@@ -1,6 +1,9 @@
 name: "Self RepoScope"
 description: "Generate language usage stats as SVG from your GitHub repos (including private)"
 author: "4okimi7uki"
+branding:
+    icon: activity
+    color: orange
 inputs:
     github_token:
         description: "GitHub Personal Access Token with repo access"
