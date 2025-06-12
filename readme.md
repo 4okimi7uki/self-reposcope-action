@@ -29,6 +29,8 @@ on:
 jobs:
     update-stats:
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
         steps:
             - name: Checkout (with submodules)
               uses: actions/checkout@v3
@@ -36,9 +38,26 @@ jobs:
                   submodules: recursive
 
             - name: Run self-reposcope
-              uses: 4okimi7uki/self-reposcope-action@v1
+              uses: 4okimi7uki/self-reposcope-action@v1.0.1
               with:
                   github_token: ${{ secrets.REPOSCOPE_TOKEN }}
+
+            - name: Commit and Push updated SVGs
+              shell: bash
+              env:
+                  GH_PAT: ${{ secrets.REPOSCOPE_TOKEN }}
+              run: |
+                  echo "::group::Git Commit and Push"
+                  git config --global user.name 'github-actions[bot]'
+                  git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+                  git add output/
+                  if git diff --cached --quiet; then
+                    echo "No changes to commit"
+                  else
+                    git commit -m "chore: update language stats SVG"
+                    git push https://x-access-token:${GH_PAT}@github.com/${{ github.repository }} HEAD:main
+                  fi
+                  echo "::endgroup::"
 ```
 
 2. Set your `REPOSCOPE_TOKEN` in **Settings > Secrets and variables > Actions > [Repository secrets]**
