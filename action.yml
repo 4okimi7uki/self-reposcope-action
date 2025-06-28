@@ -1,49 +1,60 @@
+# name: "Self RepoScope"
+# description: "Generate language usage stats as SVG from your GitHub repos (including private)"
+# author: "4okimi7uki"
+# branding:
+#     icon: activity
+#     color: orange
+# inputs:
+#     github_token:
+#         description: "GitHub Personal Access Token with repo access"
+#         required: true
+# runs:
+#     using: "composite"
+#     steps:
+#         - name: Set up Rust
+#           uses: actions-rs/toolchain@v1
+#           with:
+#               toolchain: stable
+#               override: true
+
+#         - name: Cache cargo
+#           uses: actions/cache@v3
+#           with:
+#               path: |
+#                   ~/.cargo/registry
+#                   ~/.cargo/git
+#                   target
+#               key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+#         - name: Install system deps
+#           shell: bash
+#           run: sudo apt-get update && sudo apt-get install -y pkg-config libssl-dev
+
+#         - name: Build & run self-reposcope
+#           working-directory: tools/self-reposcope
+#           shell: bash
+#           env:
+#               GITHUB_TOKEN: ${{ inputs.github_token }}
+#           run: |
+#               cargo run --release
+#               cp -r output ../..
+
+#         - name: Commit and Push SVG
+#           shell: bash
+#           run: |
+#               git config --global user.name 'github-actions[bot]'
+#               git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+#               git add output/*.svg
+#               git commit -m "chore: update language stats svg" || echo "No changes to commit"
+#               git push
+
 name: "Self RepoScope"
-description: "Generate language usage stats as SVG from your GitHub repos (including private)"
+description: "Generate language stats from your GitHub repos"
 author: "4okimi7uki"
-branding:
-    icon: activity
-    color: orange
 inputs:
     github_token:
-        description: "GitHub Personal Access Token with repo access"
+        description: "GitHub Token"
         required: true
 runs:
-    using: "composite"
-    steps:
-        - name: Set up Rust
-          uses: actions-rs/toolchain@v1
-          with:
-              toolchain: stable
-              override: true
-
-        - name: Cache cargo
-          uses: actions/cache@v3
-          with:
-              path: |
-                  ~/.cargo/registry
-                  ~/.cargo/git
-                  target
-              key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
-        - name: Install system deps
-          shell: bash
-          run: sudo apt-get update && sudo apt-get install -y pkg-config libssl-dev
-
-        - name: Build & run self-reposcope
-          working-directory: tools/self-reposcope
-          shell: bash
-          env:
-              GITHUB_TOKEN: ${{ inputs.github_token }}
-          run: |
-              cargo run --release
-              cp -r output ../..
-
-        - name: Commit and Push SVG
-          shell: bash
-          run: |
-              git config --global user.name 'github-actions[bot]'
-              git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-              git add output/*.svg
-              git commit -m "chore: update language stats svg" || echo "No changes to commit"
-              git push
+    using: "node20"
+    main: "dist/index.js"
