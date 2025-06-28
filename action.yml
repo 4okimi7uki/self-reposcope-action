@@ -1,49 +1,81 @@
-name: "Self RepoScope"
-description: "Generate language usage stats as SVG from your GitHub repos (including private)"
-author: "4okimi7uki"
-branding:
-    icon: activity
-    color: orange
-inputs:
-    github_token:
-        description: "GitHub Personal Access Token with repo access"
-        required: true
-runs:
-    using: "composite"
-    steps:
-        - name: Set up Rust
-          uses: actions-rs/toolchain@v1
-          with:
-              toolchain: stable
-              override: true
+# name: "Self RepoScope"
+# description: "Generate language usage stats as SVG from your GitHub repos (including private)"
+# author: "4okimi7uki"
+# branding:
+#     icon: activity
+#     color: orange
+# inputs:
+#     github_token:
+#         description: "GitHub Personal Access Token with repo access"
+#         required: true
+# runs:
+#     using: "composite"
+#     steps:
+#         - name: Set up Rust
+#           uses: actions-rs/toolchain@v1
+#           with:
+#               toolchain: stable
+#               override: true
 
-        - name: Cache cargo
-          uses: actions/cache@v3
-          with:
-              path: |
-                  ~/.cargo/registry
-                  ~/.cargo/git
-                  target
-              key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+#         - name: Cache cargo
+#           uses: actions/cache@v3
+#           with:
+#               path: |
+#                   ~/.cargo/registry
+#                   ~/.cargo/git
+#                   target
+#               key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-        - name: Install system deps
-          shell: bash
-          run: sudo apt-get update && sudo apt-get install -y pkg-config libssl-dev
+#         - name: Install system deps
+#           shell: bash
+#           run: sudo apt-get update && sudo apt-get install -y pkg-config libssl-dev
 
-        - name: Build & run self-reposcope
-          working-directory: tools/self-reposcope
-          shell: bash
-          env:
-              GITHUB_TOKEN: ${{ inputs.github_token }}
-          run: |
-              cargo run --release
-              cp -r output ../..
+#         - name: Build & run self-reposcope
+#           working-directory: tools/self-reposcope
+#           shell: bash
+#           env:
+#               GITHUB_TOKEN: ${{ inputs.github_token }}
+#           run: |
+#               cargo run --release
+#               cp -r output ../..
 
-        - name: Commit and Push SVG
-          shell: bash
-          run: |
-              git config --global user.name 'github-actions[bot]'
-              git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-              git add output/*.svg
-              git commit -m "chore: update language stats svg" || echo "No changes to commit"
-              git push
+#         - name: Commit and Push SVG
+#           shell: bash
+#           run: |
+#               git config --global user.name 'github-actions[bot]'
+#               git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+#               git add output/*.svg
+#               git commit -m "chore: update language stats svg" || echo "No changes to commit"
+#               git push
+
+name: Update Repo Stats
+
+on:
+    schedule:
+        - cron: "0 0 * * 1"
+    workflow_dispatch:
+
+jobs:
+    update:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Run Reposcope Action
+              uses: 4okimi7uki/self-reposcope-action@v1
+              with:
+                  github_token: ${{ secrets.REPOSCOPE_TOKEN }}
+
+            - name: Commit and Push generated SVG
+              run: |
+                  git config --global user.name 'github-actions[bot]'
+                  git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+                  git add output/
+                  if git diff --cached --quiet; then
+                    echo "No changes to commit"
+                  else
+                    git commit -m "chore: update language stats"
+                    git push
