@@ -70,6 +70,7 @@ jobs:
                   github_token: ${{ secrets.REPOSCOPE_TOKEN }}
 
             - name: Commit and Push generated SVG
+              shell: bash
               run: |
                   git config --global user.name 'github-actions[bot]'
                   git config --global user.email 'github-actions[bot]@users.noreply.github.com'
